@@ -370,12 +370,9 @@ void midi_class_driver_task(void *arg) {
 midiEventPacket_t midi_read() {
     midiEventPacket_t c = {0, 0, 0, 0};
     // Read from MIDI IN Buffer
-    if ((MIDI_BUFFER_SIZE + midi_rx_buffer.head - midi_rx_buffer.tail) % MIDI_BUFFER_SIZE > 0) {
+    if (midi_rx_buffer.head != midi_rx_buffer.tail) {
         c = midi_rx_buffer.midiEvent[midi_rx_buffer.tail];
         ESP_LOGI(TAG, "midi_read(): %02x %02x %02x %02x", c.header, c.byte1, c.byte2, c.byte3);
-    }
-
-    if (midi_rx_buffer.head != midi_rx_buffer.tail) {
         midi_rx_buffer.tail = (uint32_t)(midi_rx_buffer.tail + 1) % MIDI_BUFFER_SIZE;
         ESP_LOGI(TAG, "Buffer: head = %d, tail = %d", midi_rx_buffer.head, midi_rx_buffer.tail);
     }
